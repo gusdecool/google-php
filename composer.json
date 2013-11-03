@@ -1,5 +1,26 @@
 {
+	"name": "gusdecool/google-php",
+	"type": "library",
+	"description": "Google API PHP Wrapper",
+	"keywords": [],
+	"homepage": "",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "GusDeCooL",
+			"email": "gusdecool@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-0": { "gusdecool\\GooglePhp": "lib/" }
+	},
     "require": {
-        "jyggen/curl": "3.*"
-    }
+		"shuber/curl": "dev-master",
+		"jyggen/Curl": "3.*"
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1-dev"
+		}
+	}
 }

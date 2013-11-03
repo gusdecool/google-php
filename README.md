@@ -9,7 +9,7 @@ Requirement
 - cURL extension
 
 
-Latest Update Logs
+Update Logs
 ==================
 ###v0.1.0
-- Add google place API
+- Add google place search API

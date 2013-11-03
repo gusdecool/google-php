@@ -1,4 +1,10 @@
 <?php
+/*
+ * This file for debugging with browser,
+ * Sometime PHPUnit just return error with code, which hard to understand.
+ * So web testing will still needed.
+ */
+
 use gusdecool\GooglePhp\Place\PlaceSearch;
 
 require_once 'vendor/autoload.php';

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "jyggen/curl": "3.*"
+    }
+}

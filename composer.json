@@ -12,15 +12,14 @@
 		}
 	],
 	"autoload": {
-		"psr-0": { "gusdecool\\GooglePhp": "lib/" }
+		"psr-0": { "GusDeCooL\\GooglePhp" : "lib/" }
 	},
     "require": {
-		"shuber/curl": "dev-master",
-		"jyggen/Curl": "3.*"
+		"shuber/curl": "dev-master"
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "0.1-dev"
+			"dev-master": "0.2-dev"
 		}
 	}
 }

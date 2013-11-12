@@ -1,14 +1,17 @@
 <?php
 
-namespace gusdecool\GooglePhp\Place;
+namespace GusDeCooL\GooglePhp\Component\Place;
+
+use GusDeCooL\GooglePhp\Component\ChildInterface;
+use GusDeCooL\GooglePhp\Component\ExecutableInterface;
 
 /**
  * Class PlaceSearch
  *
- * @package gusdecool\GooglePhp
+ * @package GusDeCooL\GooglePhp
  * @url https://developers.google.com/places/documentation/search
  */
-class PlaceSearch extends Place
+class Nearby implements ChildInterface, ExecutableInterface
 {
 
 	const ENDPOINT = 'https://maps.googleapis.com/maps/api/place/nearbysearch/';
@@ -29,7 +32,7 @@ class PlaceSearch extends Place
 	 *
 	 * @var float
 	 */
-	private $radius;
+	private $radius = 10000;
 
 	/**
 	 * Indicates whether or not the Place request came
@@ -37,9 +40,9 @@ class PlaceSearch extends Place
 	 * to determine the location sent in this request.
 	 * This value must be either true or false.
 	 *
-	 * @var boolean
+	 * @var string
 	 */
-	private $sensor;
+	private $sensor = 'true';
 
 	/**
 	 * Optional parameter
@@ -50,18 +53,13 @@ class PlaceSearch extends Place
 	private $optParams = array();
 
 	/**
-	 * @param string $key
-	 * @param float $latitude
-	 * @param float $longitude
-	 * @param float $radius
-	 * @param bool $sensor
+	 * @var Place
 	 */
-	public function __construct($key, $latitude, $longitude, $radius = 100.0, $sensor = false)
+	private $parent;
+
+	public function __construct(Place $place)
 	{
-		$this->setKey($key);
-		$this->setLocation($latitude, $longitude);
-		$this->setRadius($radius);
-		$this->setSensor($sensor);
+		$this->setParent($place);
 	}
 
 	public function resetOptParams()
@@ -75,10 +73,16 @@ class PlaceSearch extends Place
 	 *
 	 * @param string $output preferred output json|xml (default:json)
 	 *
+	 * @throws \CurlException
+	 * @throws \BadMethodCallException
 	 * @return \CurlResponse|false
 	 */
 	public function execute($output = 'json')
 	{
+		if($this->getLocation() === null) {
+			throw new \BadMethodCallException('location must be set location before execution');
+		}
+
 		$endpoint = self::ENDPOINT.$output;
 		$param = array(
 			'key' => $this->getKey(),
@@ -90,15 +94,11 @@ class PlaceSearch extends Place
 
 		$curl = new \Curl();
 
-		// This code here is so bad, bad i'm very tired to complete this :(
-		// @TODO: Create generic class to
 		$response = json_decode($curl->get($endpoint, $param)->body);
 		if($response !== null && $response->status == 'OK') {
 			return $response;
 		} else {
-			// request failed
-			// This should be throw exception
-			return false;
+			throw new \CurlException('Error to execute API', 500);
 		}
 	}
 
@@ -113,10 +113,23 @@ class PlaceSearch extends Place
 	/**
 	 * @param float $latitude
 	 * @param float $longitude
+	 *
+	 * @return $this
 	 */
 	public function setLocation($latitude, $longitude)
 	{
 		$this->location = $latitude.','.$longitude;
+
+		return $this;
+	}
+
+	/**
+	 * API Key
+	 * @return string
+	 */
+	public function getKey()
+	{
+		return $this->parent->getKey();
 	}
 
 	/**
@@ -129,10 +142,14 @@ class PlaceSearch extends Place
 
 	/**
 	 * @param float $radius
+	 *
+	 * @return $this
 	 */
 	public function setRadius($radius)
 	{
 		$this->radius = $radius;
+
+		return $this;
 	}
 
 	/**
@@ -145,6 +162,8 @@ class PlaceSearch extends Place
 
 	/**
 	 * @param boolean $sensor
+	 *
+	 * @return $this
 	 */
 	public function setSensor($sensor)
 	{
@@ -154,6 +173,7 @@ class PlaceSearch extends Place
 			$this->sensor = 'false';
 		}
 
+		return $this;
 	}
 
 	/**
@@ -169,9 +189,34 @@ class PlaceSearch extends Place
 	 *
 	 * @param string $name
 	 * @param string $value
+	 *
+	 * @return $this
+	 * @url https://developers.google.com/places/documentation/search
 	 */
 	public function setOptParams($name, $value)
 	{
 		$this->optParams[$name] = $value;
+
+		return $this;
+	}
+
+	/**
+	 * @return Place
+	 */
+	public function getParent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * @param Place $parent
+	 *
+	 * @return $this
+	 */
+	public function setParent($parent)
+	{
+		$this->parent = $parent;
+
+		return $this;
 	}
 }

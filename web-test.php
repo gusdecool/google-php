@@ -1,22 +1,11 @@
 <?php
-/*
- * This file for debugging with browser,
- * Sometime PHPUnit just return error with code, which hard to understand.
- * So web testing will still needed.
- */
+require_once __DIR__.'/vendor/autoload.php';
+$google = new \GusDeCooL\GooglePhp\Google('AIzaSyB55gLF0Q8kNfFaCkw-ip6HkOJz6L9PrTQ');
+$nearby = $google->getPlace()
+	->getNearby()
+	->setLocation(-8.693295, 115.177965)
+	->setOptParams('keyword', 'Bunga Mata')
+	->execute();
+var_dump($nearby->results);
 
-use gusdecool\GooglePhp\Place\PlaceSearch;
-
-require_once 'vendor/autoload.php';
-require_once __DIR__.'/Config.php';
-
-$place = new PlaceSearch(
-	\Config::KEY,
-	\Config::LATITUDE,
-	\Config::LONGITUDE
-);
-
-$place->setOptParams('keyword', 'Bunga Mata');
-$response = $place->execute();
-var_dump($response);
 
